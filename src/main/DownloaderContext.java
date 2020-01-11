@@ -1,9 +1,10 @@
 package main;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DownloaderContext {
+public class DownloaderContext implements Serializable {
     private URL url;
     private Range range;
 

@@ -1,6 +1,8 @@
 package main;
 
-public class Range {
+import java.io.Serializable;
+
+public class Range implements Serializable {
     private long startByte;
     private long endByte;
 

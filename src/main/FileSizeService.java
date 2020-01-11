@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class FileSizeService {
+    private FileSizeService() {}
     public static long getFileSize(String fileUrl) {
         try {
             URL url = new URL(fileUrl);
