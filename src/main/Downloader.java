@@ -27,7 +27,7 @@ public class Downloader implements Runnable {
             long fileSize =  httpURLConnection.getContentLengthLong();
             System.out.println(fileSize);
             try (BufferedInputStream in = new BufferedInputStream(httpURLConnection.getInputStream())) {
-                File file = new File("./out/test-file.txt");
+                File file = new File("./out/" + FilesUtil.extract(url.getPath()));
                 RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
                 long currentByte = downloaderContext.getStartByte();
                 randomAccessFile.seek(currentByte);
@@ -35,9 +35,8 @@ public class Downloader implements Runnable {
                 int bytesRead;
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                     randomAccessFile.write(dataBuffer, 0, bytesRead);
-                    System.out.println("Wrote bytes: " + currentByte + " - " + (currentByte + bytesRead));
                     currentByte += bytesRead;
-                    System.out.println("Progress: " + Math.round(((double) currentByte / fileSize) * 100) + "%");
+//                    TimeUnit.SECONDS.sleep(3);
                     metadataHandler.updateMetadataFile(currentByte);
                 }
             }

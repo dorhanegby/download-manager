@@ -6,7 +6,8 @@ import java.util.ArrayList;
 public class MetadataHandler implements Serializable {
     private ArrayList<DownloaderContext> downloaderContexts;
     private static MetadataHandler instance;
-    String metaFilePath;
+    private ProgressService progressService;
+    private String metaFilePath;
 
     private MetadataHandler() {
     }
@@ -19,15 +20,19 @@ public class MetadataHandler implements Serializable {
         return instance;
     }
 
-    public void init(String metaFileName, ArrayList<DownloaderContext> downloaderContexts) {
+    public void init(String metaFileName, ArrayList<DownloaderContext> downloaderContexts, long fileSize) {
         this.metaFilePath = MetadataHandler.formatMetadataFile(metaFileName);
         this.downloaderContexts = downloaderContexts;
+        progressService = new ProgressService(0, fileSize);
     }
 
     public void updateMetadataFile(long startByte) {
         boolean hasChanged = false;
         for (DownloaderContext downloadContext: downloaderContexts) {
             if(downloadContext.isByteInRange(startByte)) {
+                long delta = startByte - downloadContext.getStartByte();
+                progressService.incrementBytesDownloded(delta);
+                progressService.displayProgress();
                 downloadContext.setRangeStartByte(startByte);
                 hasChanged = true;
             }

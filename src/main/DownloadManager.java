@@ -35,7 +35,7 @@ public class DownloadManager {
         for (Range range : this.partitioner.getPartitions()) {
             downloaderContexts.add(new DownloaderContext(url, range));
         }
-        metadataHandler.init(fileName , downloaderContexts);
+        metadataHandler.init(fileName , downloaderContexts, fileSize);
         metadataHandler.serialize();
     }
 
