@@ -1,19 +1,19 @@
 package main;
 
 public class Range {
-    private int startByte;
-    private int endByte;
+    private long startByte;
+    private long endByte;
 
-    public Range(int startByte, int endByte) {
+    public Range(long startByte, long endByte) {
         this.startByte = startByte;
         this.endByte = endByte;
     }
 
-    public int getStartByte() {
+    public long getStartByte() {
         return startByte;
     }
 
-    public int getEndByte() {
+    public long getEndByte() {
         return endByte;
     }
 }

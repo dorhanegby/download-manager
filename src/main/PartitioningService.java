@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class PartitioningService {
 
     private int amountOfPartitions;
-    private int contentSize;
+    private long contentSize;
 
-    public PartitioningService(int amountOfPartitions, int contentSize) {
+    public PartitioningService(int amountOfPartitions, long contentSize) {
         this.amountOfPartitions = amountOfPartitions;
         this.contentSize = contentSize;
     }
@@ -26,15 +26,15 @@ public class PartitioningService {
 
     private Range handleLastRange() {
         int iteration = amountOfPartitions - 1;
-        int startByte = iteration  * (contentSize / amountOfPartitions);
-        int endByte = contentSize - 1;
+        long startByte = iteration  * (contentSize / amountOfPartitions);
+        long endByte = contentSize - 1;
 
         return new Range(startByte, endByte);
     }
 
     private Range handleMiddleRange(int i) {
-        int startByte = i * (contentSize / amountOfPartitions);
-        int endByte = (i + 1) * (contentSize / amountOfPartitions) - 1;
+        long startByte = i * (contentSize / amountOfPartitions);
+        long endByte = (i + 1) * (contentSize / amountOfPartitions) - 1;
         return new Range(startByte, endByte);
     }
     private boolean isMiddleIteration(int i) {
