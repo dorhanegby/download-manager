@@ -24,4 +24,16 @@ public class DownloaderContext implements Serializable {
     public String getRangeHeader() {
         return "bytes=" + range.getStartByte() + "-" + range.getEndByte();
     }
+
+    public long getStartByte() {
+        return range.getStartByte();
+    }
+
+    public boolean isByteInRange(long byteToCompare) {
+        return range.getStartByte() <= byteToCompare && byteToCompare <= range.getEndByte();
+    }
+
+    public void setRangeStartByte(long byteToSet) {
+        this.range.setStartByte(byteToSet);
+    }
 }

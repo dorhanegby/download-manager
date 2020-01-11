@@ -3,7 +3,6 @@ package main;
 import java.util.ArrayList;
 
 public class PartitioningService {
-
     private int amountOfPartitions;
     private long contentSize;
 

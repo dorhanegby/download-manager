@@ -24,6 +24,20 @@ public class MetadataHandler implements Serializable {
         this.downloaderContexts = downloaderContexts;
     }
 
+    public void updateMetadataFile(long startByte) {
+        boolean hasChanged = false;
+        for (DownloaderContext downloadContext: downloaderContexts) {
+            if(downloadContext.isByteInRange(startByte)) {
+                downloadContext.setRangeStartByte(startByte);
+                hasChanged = true;
+            }
+        }
+
+        if(hasChanged) {
+            serialize();
+        }
+    }
+
     public static String formatMetadataFile(String metaFileName) {
         return "./" + metaFileName + ".meta.txt";
     }

@@ -18,4 +18,8 @@ public class Range implements Serializable {
     public long getEndByte() {
         return endByte;
     }
+
+    public void setStartByte(long byteToSet) {
+        this.startByte = byteToSet;
+    }
 }
