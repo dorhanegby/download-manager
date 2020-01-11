@@ -1,3 +1,5 @@
+package main;
+
 public class Range {
     private int startByte;
     private int endByte;
