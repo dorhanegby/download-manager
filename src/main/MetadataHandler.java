@@ -44,7 +44,7 @@ public class MetadataHandler implements Serializable {
     }
 
     public static String formatMetadataFile(String metaFileName) {
-        return "./" + metaFileName + ".meta.txt";
+        return "./" + metaFileName + ".meta";
     }
 
 
@@ -58,7 +58,7 @@ public class MetadataHandler implements Serializable {
             out.close();
             file.close();
 
-            System.out.println("Object has been serialized");
+//            System.out.println("Object has been serialized");
 
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

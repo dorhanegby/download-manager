@@ -36,7 +36,6 @@ public class Downloader implements Runnable {
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                     randomAccessFile.write(dataBuffer, 0, bytesRead);
                     currentByte += bytesRead;
-//                    TimeUnit.SECONDS.sleep(3);
                     metadataHandler.updateMetadataFile(currentByte);
                 }
             }

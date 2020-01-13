@@ -16,7 +16,7 @@ public class ProgressService implements Serializable {
     }
 
     public void displayProgress() {
-        System.out.println("Progress: " + Math.round(((double) totalBytesDownloaded / fileSize) * 100) + "%");
+//        System.out.println("Progress: " + Math.round(((double) totalBytesDownloaded / fileSize) * 100) + "%");
     }
 
 
