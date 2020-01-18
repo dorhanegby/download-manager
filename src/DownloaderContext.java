@@ -1,19 +1,18 @@
-package main;
-
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DownloaderContext implements Serializable {
+class DownloaderContext implements Serializable {
     private URL url;
     private Range range;
+    private long bytesDownloaded = 0;
 
-    public DownloaderContext(String url, Range range) {
+    DownloaderContext(String url, Range range) {
         try {
             this.url = new URL(url);
             this.range = range;
         } catch (MalformedURLException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -23,6 +22,10 @@ public class DownloaderContext implements Serializable {
 
     public String getRangeHeader() {
         return "bytes=" + range.getStartByte() + "-" + range.getEndByte();
+    }
+
+    public String getRangeForLogging() {
+        return "(" + range.getStartByte() + " - " + range.getEndByte() + ")";
     }
 
     public long getStartByte() {
@@ -35,5 +38,13 @@ public class DownloaderContext implements Serializable {
 
     public void setRangeStartByte(long byteToSet) {
         this.range.setStartByte(byteToSet);
+    }
+
+    public void addDownloadedBytes(long bytesDownloaded){
+        this.bytesDownloaded += bytesDownloaded;
+    }
+
+    public long getBytesDownloaded() {
+        return bytesDownloaded;
     }
 }

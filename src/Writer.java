@@ -1,17 +1,15 @@
-package main;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
-public class Writer implements Runnable {
+class Writer implements Runnable {
 
-    private BlockingQueue queue = BlockingQueue.getInstance();
-    private MetadataHandler metadataHandler = MetadataHandler.getInstance();
+    private final BlockingQueue queue = BlockingQueue.getInstance();
+    private final MetadataHandler metadataHandler = MetadataHandler.getInstance();
     private RandomAccessFile randomAccessFile;
-    public boolean isCompleted = false;
+    private boolean isCompleted = false;
 
-    public Writer(File file) {
+    Writer(File file) {
         try {
             this.randomAccessFile = new RandomAccessFile(file, "rw");
         } catch (FileNotFoundException e) {

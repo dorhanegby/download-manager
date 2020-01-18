@@ -1,22 +1,15 @@
-package main;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class DownloadManager {
-    private ArrayList<DownloaderContext> downloaderContexts;
-    private Writer writer;
-    int numberOfThreads;
+public class DownloadManagerUrl extends AbstractDownloadManager{
 
-    public DownloadManager(String url) {
+    public DownloadManagerUrl(String url) {
         this(url, 1);
     }
-    public DownloadManager(String url, int numberOfThreads) {
+    public DownloadManagerUrl(String url, int numberOfThreads) {
         this.numberOfThreads = numberOfThreads;
         String fileName = FilesUtil.extract(url);
-        File file = new File("./out/" + fileName);
+        File file = new File(fileName);
         writer = new Writer(file);
         if(!FilesUtil.isFileExists(MetadataHandler.formatMetadataFile(fileName))) {
             startNewDownload(url, numberOfThreads);
@@ -45,23 +38,4 @@ public class DownloadManager {
         metadataHandler.init(fileName , downloaderContexts, fileSize);
         metadataHandler.serialize();
     }
-
-
-    public void download() {
-        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads + 1);
-        executor.execute(writer);
-
-        for (DownloaderContext downloaderContext : downloaderContexts) {
-            Downloader downloader = new Downloader(downloaderContext);
-            executor.execute(downloader);
-        }
-
-        // waiting for executor service to terminate
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        System.out.println("Finished all threads");
-    }
-
 }

@@ -1,5 +1,3 @@
-package main;
-
 import java.io.*;
 import java.util.ArrayList;
 
@@ -8,7 +6,7 @@ public class MetadataHandler implements Serializable {
     private static MetadataHandler instance;
     private ProgressService progressService;
     private String metaFilePath;
-    private String tempPath = "./temp.meta";
+    private final String tempPath = "./temp.meta";
 
     private MetadataHandler() {
     }
@@ -24,15 +22,16 @@ public class MetadataHandler implements Serializable {
     public void init(String metaFileName, ArrayList<DownloaderContext> downloaderContexts, long fileSize) {
         this.metaFilePath = MetadataHandler.formatMetadataFile(metaFileName);
         this.downloaderContexts = downloaderContexts;
-        progressService = new ProgressService(0, fileSize);
+        progressService = new ProgressService(fileSize);
     }
 
     public void updateMetadataFile(long currentByte, int bytesRead) {
         boolean hasChanged = false;
         for (DownloaderContext downloadContext : instance.downloaderContexts) {
             if (downloadContext.isByteInRange(currentByte)) {
-                downloadContext.setRangeStartByte(currentByte);
-                instance.progressService.incrementBytesDownloded(bytesRead);
+                downloadContext.setRangeStartByte(currentByte + bytesRead);
+                downloadContext.addDownloadedBytes(bytesRead);
+                instance.progressService.incrementBytesDownloaded(bytesRead);
                 instance.progressService.displayProgress();
                 hasChanged = true;
             }
@@ -88,12 +87,11 @@ public class MetadataHandler implements Serializable {
 
             long fileSizeDownloaded = 0;
             for (DownloaderContext downloaderContext : instance.getDownloaderContexts()){
-                fileSizeDownloaded += downloaderContext.getStartByte();
+                fileSizeDownloaded += downloaderContext.getBytesDownloaded();
             }
 
             instance.progressService.setTotalBytesDownloaded(fileSizeDownloaded);
 
-            System.out.println("Object has been deserialized ");
             System.out.println(instance.downloaderContexts);
         }
 

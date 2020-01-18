@@ -1,10 +1,8 @@
-package main;
-
 import java.io.Serializable;
 
 public class Range implements Serializable {
     private long startByte;
-    private long endByte;
+    private final long endByte;
 
     public Range(long startByte, long endByte) {
         this.startByte = startByte;

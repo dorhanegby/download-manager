@@ -1,10 +1,8 @@
-package main;
-
 import java.util.ArrayList;
 
 public class PartitioningService {
-    private int amountOfPartitions;
-    private long contentSize;
+    private final int amountOfPartitions;
+    private final long contentSize;
 
     public PartitioningService(int amountOfPartitions, long contentSize) {
         this.amountOfPartitions = amountOfPartitions;

@@ -1,9 +1,7 @@
-package main;
-
-public class Message {
-    private byte dataBuffer[];
-    private int bytesRead;
-    private long currentByte;
+class Message {
+    private final byte[] dataBuffer;
+    private final int bytesRead;
+    private final long currentByte;
 
     public Message(byte[] dataBuffer, int bytesRead, long currentByte) {
         this.dataBuffer = dataBuffer;
