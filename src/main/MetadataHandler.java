@@ -97,4 +97,8 @@ public class MetadataHandler implements Serializable {
     public ArrayList<DownloaderContext> getDownloaderContexts() {
         return instance.downloaderContexts;
     }
+
+    public boolean isDownloadCompleted() {
+        return progressService.isDownloadCompleted();
+    }
 }

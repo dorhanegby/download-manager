@@ -23,14 +23,30 @@ public class DownloadManagerTest {
     }
 
     @Test
-    public void shouldDownloadTheRightFile() {
-        String url = "https://www.w3.org/TR/PNG/iso_8859-1.txt";
-        DownloadManager dm = new DownloadManager(url);
-        dm.download();
-        String actual = getMD5Hash("./out/iso_8859-1.txt");
-        assertEquals("8026e3afd2e13dab1f5c53bf1c353", actual);
-        deleteFile("./out/iso_8859-1.txt");
-        deleteFile("./iso_8859-1.txt.meta");
+    public void shouldDownloadTheRightFile(){
+        try {
+            Thread t1 = new Thread(() -> {
+                try {
+                    String url = "https://www.w3.org/TR/PNG/iso_8859-1.txt";
+                    DownloadManager dm = new DownloadManager(url);
+                    dm.download();
+                } catch (Exception e) {
+                    // handle: log or throw in a wrapped RuntimeException
+                    throw new RuntimeException("InterruptedException caught in lambda", e);
+                }
+            });
+            t1.start();
+            TimeUnit.SECONDS.sleep(5);
+
+            String actual = getMD5Hash("./out/iso_8859-1.txt");
+
+            assertEquals("8026e3afd2e13dab1f5c53bf1c353", actual);
+            deleteFile("./out/iso_8859-1.txt");
+            deleteFile("./iso_8859-1.txt.meta");
+        }
+        catch (Exception e) {
+
+        }
     }
 
     @Test
@@ -48,9 +64,9 @@ public class DownloadManagerTest {
             });
             t1.start();
             TimeUnit.SECONDS.sleep(2);
-            System.out.println("resumed");
             t1.interrupt();
             t1.run();
+            System.out.println("resumed");
             String actual = getMD5Hash("./out/SpeedTest_16MB.dat");
             deleteFile("./out/SpeedTest_16MB.dat");
             deleteFile("./SpeedTest_16MB.dat.meta");

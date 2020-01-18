@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class ProgressService implements Serializable {
     private long totalBytesDownloaded;
     private long fileSize;
+    private boolean[] prints = new boolean[101];
 
     public ProgressService(long totalBytesDownloaded, long fileSize) {
         this.totalBytesDownloaded = totalBytesDownloaded;
@@ -16,8 +17,14 @@ public class ProgressService implements Serializable {
     }
 
     public void displayProgress() {
-//        System.out.println("Progress: " + Math.round(((double) totalBytesDownloaded / fileSize) * 100) + "%");
+        int index = (int) Math.round(((double) totalBytesDownloaded / fileSize) * 100);
+        if(!prints[index]) {
+            System.out.println("Progress: " + index + "%");
+            prints[index] = true;
+        }
     }
 
-
+    public boolean isDownloadCompleted() {
+        return totalBytesDownloaded == fileSize;
+    }
 }

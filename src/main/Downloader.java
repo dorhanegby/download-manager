@@ -23,20 +23,16 @@ public class Downloader implements Runnable {
             httpURLConnection.setRequestProperty("Range", downloaderContext.getRangeHeader());
             System.out.println("Range: " + downloaderContext.getRangeHeader());
             httpURLConnection.connect();
-            MetadataHandler metadataHandler = MetadataHandler.getInstance();
-            long fileSize =  httpURLConnection.getContentLengthLong();
-            System.out.println(fileSize);
+            BlockingQueue queue = BlockingQueue.getInstance();
             try (BufferedInputStream in = new BufferedInputStream(httpURLConnection.getInputStream())) {
-                File file = new File("./out/" + FilesUtil.extract(url.getPath()));
-                RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+
                 long currentByte = downloaderContext.getStartByte();
-                randomAccessFile.seek(currentByte);
                 byte dataBuffer[] = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                    randomAccessFile.write(dataBuffer, 0, bytesRead);
+                    queue.enqueue(new Message(dataBuffer, bytesRead, currentByte));
                     currentByte += bytesRead;
-                    metadataHandler.updateMetadataFile(currentByte);
+                    dataBuffer = new byte[1024];
                 }
             }
         } catch (Exception e) {

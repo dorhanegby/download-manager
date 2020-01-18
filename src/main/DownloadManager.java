@@ -1,16 +1,18 @@
 package main;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DownloadManager {
-    PartitioningService partitioner;
-    ArrayList<DownloaderContext> downloaderContexts;
+    private ArrayList<DownloaderContext> downloaderContexts;
+    private Writer writer;
     public DownloadManager(String url) {
         this(url, 1);
     }
     public DownloadManager(String url, int numberOfThreads) {
         String fileName = FilesUtil.extract(url);
-
+        File file = new File("./out/" + fileName);
+        writer = new Writer(file);
         if(!FilesUtil.isFileExists(MetadataHandler.formatMetadataFile(fileName))) {
             startNewDownload(url, numberOfThreads);
         }
@@ -31,8 +33,8 @@ public class DownloadManager {
         MetadataHandler metadataHandler = MetadataHandler.getInstance();
         downloaderContexts = new ArrayList<>();
         long fileSize = FileSizeService.getFileSize(url);
-        this.partitioner = new PartitioningService(numberOfThreads, fileSize);
-        for (Range range : this.partitioner.getPartitions()) {
+        PartitioningService partitioner = new PartitioningService(numberOfThreads, fileSize);
+        for (Range range : partitioner.getPartitions()) {
             downloaderContexts.add(new DownloaderContext(url, range));
         }
         metadataHandler.init(fileName , downloaderContexts, fileSize);
@@ -41,9 +43,11 @@ public class DownloadManager {
 
 
     public void download() {
+        Thread writerThread = new Thread(writer);
+        writerThread.start();
         for (DownloaderContext downloaderContext : downloaderContexts) {
             Downloader downloader = new Downloader(downloaderContext);
-            downloader.run();
+            new Thread(downloader).start();
         }
     }
 }
