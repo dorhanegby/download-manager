@@ -17,8 +17,8 @@ public class ProgressService implements Serializable {
     }
 
     public void displayProgress() {
-        int index = (int) Math.round(((double) totalBytesDownloaded / fileSize) * 100);
-        if(!prints[index]) {
+        int index = (int) Math.floor(((double) totalBytesDownloaded / fileSize) * 100);
+        if (!prints[index]) {
             System.out.println("Progress: " + index + "%");
             prints[index] = true;
         }
@@ -26,5 +26,9 @@ public class ProgressService implements Serializable {
 
     public boolean isDownloadCompleted() {
         return totalBytesDownloaded == fileSize;
+    }
+
+    public void setTotalBytesDownloaded(long totalBytesDownloaded) {
+        this.totalBytesDownloaded = totalBytesDownloaded;
     }
 }

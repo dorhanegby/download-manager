@@ -2,14 +2,19 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DownloadManager {
     private ArrayList<DownloaderContext> downloaderContexts;
     private Writer writer;
+    int numberOfThreads;
+
     public DownloadManager(String url) {
         this(url, 1);
     }
     public DownloadManager(String url, int numberOfThreads) {
+        this.numberOfThreads = numberOfThreads;
         String fileName = FilesUtil.extract(url);
         File file = new File("./out/" + fileName);
         writer = new Writer(file);
@@ -43,11 +48,20 @@ public class DownloadManager {
 
 
     public void download() {
-        Thread writerThread = new Thread(writer);
-        writerThread.start();
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads + 1);
+        executor.execute(writer);
+
         for (DownloaderContext downloaderContext : downloaderContexts) {
             Downloader downloader = new Downloader(downloaderContext);
-            new Thread(downloader).start();
+            executor.execute(downloader);
         }
+
+        // waiting for executor service to terminate
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+
+        System.out.println("Finished all threads");
     }
+
 }

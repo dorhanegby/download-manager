@@ -33,12 +33,9 @@ public class Writer implements Runnable {
 
     private void consume() throws Exception {
         Message msg = queue.dequeue();
-        System.out.println("Writer :: Received Message, Current Byte: " + msg.getCurrentByte());
-        System.out.println("Writer :: Received Message, getBytesRead: " + msg.getBytesRead());
-
         randomAccessFile.seek(msg.getCurrentByte());
         randomAccessFile.write(msg.getDataBuffer(), 0, msg.getBytesRead());
-        metadataHandler.updateMetadataFile(msg.getCurrentByte());
+        metadataHandler.updateMetadataFile(msg.getCurrentByte(), msg.getBytesRead());
     }
 
 }

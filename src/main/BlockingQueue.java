@@ -20,7 +20,6 @@ public class BlockingQueue {
 
 
     public synchronized void enqueue(Message item) throws InterruptedException {
-        System.out.println("Queue :: Received Message, Current Byte: " + item.getCurrentByte());
         while (this.queue.size() == this.limit) {
             wait();
         }
@@ -37,7 +36,6 @@ public class BlockingQueue {
             notifyAll();
         }
         Message msg = this.queue.remove(0);
-        System.out.println("Queue :: dequeue Message, Current Byte: " + msg.getCurrentByte());
         return msg;
     }
 }

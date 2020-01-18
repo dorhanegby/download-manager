@@ -8,6 +8,7 @@ public class MetadataHandler implements Serializable {
     private static MetadataHandler instance;
     private ProgressService progressService;
     private String metaFilePath;
+    private String tempPath = "./temp.meta";
 
     private MetadataHandler() {
     }
@@ -26,14 +27,13 @@ public class MetadataHandler implements Serializable {
         progressService = new ProgressService(0, fileSize);
     }
 
-    public void updateMetadataFile(long startByte) {
+    public void updateMetadataFile(long currentByte, int bytesRead) {
         boolean hasChanged = false;
-        for (DownloaderContext downloadContext: downloaderContexts) {
-            if(downloadContext.isByteInRange(startByte)) {
-                long delta = startByte - downloadContext.getStartByte();
-                progressService.incrementBytesDownloded(delta);
-                progressService.displayProgress();
-                downloadContext.setRangeStartByte(startByte);
+        for (DownloaderContext downloadContext : instance.downloaderContexts) {
+            if (downloadContext.isByteInRange(currentByte)) {
+                downloadContext.setRangeStartByte(currentByte);
+                instance.progressService.incrementBytesDownloded(bytesRead);
+                instance.progressService.displayProgress();
                 hasChanged = true;
             }
         }
@@ -50,7 +50,7 @@ public class MetadataHandler implements Serializable {
 
     public void serialize() {
         try {
-            FileOutputStream file = new FileOutputStream(metaFilePath);
+            FileOutputStream file = new FileOutputStream(tempPath);
             ObjectOutputStream out = new ObjectOutputStream(file);
 
             out.writeObject(MetadataHandler.getInstance());
@@ -58,12 +58,19 @@ public class MetadataHandler implements Serializable {
             out.close();
             file.close();
 
-//            System.out.println("Object has been serialized");
+            renameMetadataFile();
 
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             System.out.println("IOException is caught");
         }
+    }
+
+    private void renameMetadataFile() {
+        File realMetadataFile = new File(instance.metaFilePath);
+        File tempMetadataFile = new File(instance.tempPath);
+
+        tempMetadataFile.renameTo(realMetadataFile);
     }
 
     public void deserialize(String fileName) {
@@ -78,6 +85,13 @@ public class MetadataHandler implements Serializable {
 
             in.close();
             file.close();
+
+            long fileSizeDownloaded = 0;
+            for (DownloaderContext downloaderContext : instance.getDownloaderContexts()){
+                fileSizeDownloaded += downloaderContext.getStartByte();
+            }
+
+            instance.progressService.setTotalBytesDownloaded(fileSizeDownloaded);
 
             System.out.println("Object has been deserialized ");
             System.out.println(instance.downloaderContexts);
@@ -99,6 +113,6 @@ public class MetadataHandler implements Serializable {
     }
 
     public boolean isDownloadCompleted() {
-        return progressService.isDownloadCompleted();
+        return instance.progressService.isDownloadCompleted();
     }
 }
